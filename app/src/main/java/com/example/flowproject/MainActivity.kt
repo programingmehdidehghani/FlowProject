@@ -2,7 +2,10 @@ package com.example.flowproject
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.lifecycle.lifecycleScope
 import com.example.flowproject.databinding.ActivityMainBinding
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
@@ -23,7 +26,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.btnFlow.setOnClickListener {
-            viewModel.triggerFlow()
+            lifecycleScope.launch {
+                viewModel.triggerFlow().collectLatest {
+                    binding.txtFlow.text = it
+                }
+            }
         }
 
         binding.btnShareteFlow.setOnClickListener {
@@ -36,4 +43,11 @@ class MainActivity : AppCompatActivity() {
         viewModel.liveData.observe(this){
             binding.txtLiveData.text = it
         }
-    }}
+        lifecycleScope.launchWhenStarted {
+            viewModel.stateFlow.collectLatest {
+                binding.txtStateFlow.text = it
+            }
+        }
+
+    }
+}
