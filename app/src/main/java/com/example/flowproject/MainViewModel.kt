@@ -3,10 +3,10 @@ package com.example.flowproject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
 
@@ -19,8 +19,27 @@ class MainViewModel : ViewModel() {
     private val _sharedFlow = MutableSharedFlow<String>()
     val sharedFlow = _sharedFlow.asSharedFlow()
 
-    fun triggleLiveDate(){
+    fun triggerLiveDate(){
         _liveData.value = "LiveData"
+    }
+
+    fun triggerStateFlow(){
+        _stateFlow.value = "StateFlow"
+    }
+
+    fun triggerFlow(): Flow<String>{
+        return flow {
+            repeat(5){
+                emit("Item $it")
+                delay(1000L)
+            }
+        }
+    }
+
+    fun triggerSharedFlow(){
+        viewModelScope.launch {
+            _sharedFlow.emit("SharedFlow")
+        }
     }
 
 }
